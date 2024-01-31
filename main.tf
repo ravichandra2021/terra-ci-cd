@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "nginx" {
-    ami = "ami-0b86b6d499bcd4261"
+    ami = "ami-06aa3f7caf3a30282"
     instance_type = "t2.micro"
     user_data = file("nginx.sh")
     tags = { 
@@ -21,7 +21,7 @@ resource "aws_instance" "nginx" {
 }
 
 resource "aws_instance" "apache" {
-    ami = "ami-0b86b6d499bcd4261"
+    ami = "ami-06aa3f7caf3a30282"
     instance_type = "t2.micro"
     user_data = file("apache.sh")
     tags = { 
