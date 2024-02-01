@@ -93,25 +93,20 @@ resource "aws_route_table_association" "public_subnet_2_association" {
   subnet_id      = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.public_route_table.id
 }
-resource "aws_eip" "public_subnet_1" {
-  instance = null # Can be set to an EC2 instance ID if needed
-}
-resource "aws_eip" "public_subnet_2" {
-  instance = null # Can be set to an EC2 instance ID if needed
-}
+
 # Create NAT gateways in public subnets
 #resource "aws_nat_gateway" "nat_gateway_1" {
-resource "aws_nat_gateway" "natgateway_1" {
-  allocation_id = aws_eip.public_subnet_1.id
+#resource "aws_nat_gateway" "natgateway_1" {
+#  allocation_id = aws_eip.eip.id
+#  allocation_id = aws_subnet.public_subnet_1.id
 #  subnet_id     = aws_subnet.private_subnet_1.id
-  subnet_id     = aws_subnet.public_subnet_1.id
-}
+#}
 #resource "aws_nat_gateway" "nat_gateway_2" {
-resource "aws_nat_gateway" "natgateway_2" {
-  allocation_id = aws_eip.public_subnet_2.id
-  subnet_id     = aws_subnet.public_subnet_2.id
+#resource "aws_nat_gateway" "natgateway_2" {
+#  allocation_id = aws_eip.eip.id
+#  allocation_id = aws_subnet.public_subnet_2.id
 #  subnet_id     = aws_subnet.private_subnet_2.id
-}
+#}
 
 # Create a route table for private subnets
 resource "aws_route_table" "private_route_table_1" {
@@ -140,6 +135,8 @@ resource "aws_instance" "ec2_instance_1" {
   subnet_id     = aws_subnet.public_subnet_1.id
   key_name      = "devopstest"  # Replace with your key pair name
   associate_public_ip_address = true
+  
+
   tags = {
     Name = "EC2_Instance_1"
   }
@@ -151,7 +148,58 @@ resource "aws_instance" "ec2_instance_2" {
   subnet_id     = aws_subnet.public_subnet_2.id
   key_name      = "devopstest"  # Replace with your key pair name
   associate_public_ip_address = true
+
   tags = {
     Name = "EC2_Instance_2"
   }
 }
+# Create security group for ALB
+resource "aws_security_group" "alb_sg" {
+  vpc_id = aws_vpc.my_vpc.id
+
+  // Add any necessary inbound rules for ALB
+}
+
+# Create ALB
+resource "aws_lb" "my_alb" {
+  name               = "my-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
+
+  enable_deletion_protection       = false
+  enable_http2                     = true
+  idle_timeout                     = 60
+  enable_cross_zone_load_balancing = true
+
+}
+
+# Register EC2 instances with the ALB
+resource "aws_lb_target_group" "my_target_group" {
+  name        = "my-target-group"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.my_vpc.id
+  target_type = "instance"
+
+  health_check {
+    path     = "/"
+    protocol = "HTTP"
+    port     = 80
+  }
+}
+
+resource "aws_lb_listener" "my_listener" {
+  load_balancer_arn = "arn:aws:elasticloadbalancing:us-east-1:129882018060:loadbalancer/app/my-alb/dfd3d9c15d384599"
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      status_code  = "200"
+      message_body = "OK"
+    }
+  }
