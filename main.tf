@@ -203,3 +203,4 @@ resource "aws_lb_listener" "my_listener" {
       message_body = "OK"
     }
   }
+}
