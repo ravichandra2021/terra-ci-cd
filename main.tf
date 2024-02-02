@@ -30,11 +30,14 @@ resource "aws_subnet" "public_subnet_2" {
   availability_zone       = "us-east-1b"
   map_public_ip_on_launch = true
 }
-# Create an Internet Gateway
-resource "aws_internet_gateway" "my_internet_gateway" {
+# Create an Internet Gateway 1
+resource "aws_internet_gateway" "my_internet_gateway_1" {
   vpc_id = aws_vpc.my_vpc.id
 }
-
+# Create an Internet Gateway 2
+resource "aws_internet_gateway" "my_internet_gateway_2" {
+  vpc_id = aws_vpc.my_vpc.id
+}
 # Create a route table for the public subnet 1
 resource "aws_route_table" "public_route_table_1" {
   vpc_id = aws_vpc.my_vpc.id
@@ -59,13 +62,13 @@ resource "aws_route_table_association" "public_subnet_2_association" {
 resource "aws_route" "internet_route_1" {
   route_table_id         = aws_route_table.public_route_table_1.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.my_internet_gateway.id
+  gateway_id             = aws_internet_gateway.my_internet_gateway_1.id
 }
 # Create a route in the public route table 2 to the Internet through the Internet Gateway
 resource "aws_route" "internet_route_2" {
   route_table_id         = aws_route_table.public_route_table_2.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.my_internet_gateway.id
+  gateway_id             = aws_internet_gateway.my_internet_gateway_2.id
 }
 # Create a security group allowing inbound SSH traffic
 resource "aws_security_group" "allow_ssh" {
