@@ -105,3 +105,66 @@ resource "aws_instance" "my_instance_2" {
     Name = "MyEC2-sub2"
   }
 }
+# Create security group for ALB
+resource "aws_security_group" "alb_sg" {
+  vpc_id = aws_vpc.my_newvpc.id
+
+  // Add any necessary inbound rules for ALB
+}
+
+# Create ALB
+resource "aws_lb" "my_alb" {
+  name               = "my-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
+
+  enable_deletion_protection       = false
+  enable_http2                     = true
+  idle_timeout                     = 60
+  enable_cross_zone_load_balancing = true
+
+  enable_deletion_protection = false
+  enable_http2               = true
+  idle_timeout               = 60
+
+  enable_http2 = true
+
+  enable_deletion_protection = false
+}
+
+# Register EC2 instances with the ALB
+resource "aws_lb_target_group" "my_target_group" {
+  name        = "my-target-group"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.my_newvpc.id
+  target_type = "instance"
+
+  health_check {
+    path     = "/"
+    protocol = "HTTP"
+    port     = 80
+  }
+}
+
+resource "aws_lb_listener" "my_listener" {
+  load_balancer_arn = aws_lb.my_alb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      status_code  = "200"
+      message_body = "OK"
+    }
+  }
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.my_target_group.arn
+  }
+}
