@@ -143,7 +143,7 @@ resource "aws_lb_target_group" "my_target_group" {
 }
 
 resource "aws_lb_listener" "my_listener" {
-  load_balancer_arn = "arn:aws:elasticloadbalancing:us-east-1:129882018060:loadbalancer/app/my-alb/dfd3d9c15d384599"
+  load_balancer_arn = "arn:aws:elasticloadbalancing:us-east-1:129882018060:loadbalancer/app/my-alb/f9fcf9fc13e4ff39"
   port              = 80
   protocol          = "HTTP"
 
