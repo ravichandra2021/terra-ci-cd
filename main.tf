@@ -50,7 +50,7 @@ resource "aws_route_table_association" "public_subnet_1_association" {
 }
 # Create a route table for the public subnet 2
 resource "aws_route_table" "public_route_table_2" {
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id = aws_vpc.my_newvpc.id
 }
 
 # Associate the public subnet with the public route table 2
