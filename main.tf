@@ -82,7 +82,7 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 # Create an EC2 instance in the public subnet 1
-resource "aws_instance" "my_instance" {
+resource "aws_instance" "my_instance_1" {
   ami           = "ami-0b86b6d499bcd4261"  # Replace with the actual AMI ID
   instance_type = "t2.micro"      # Choose the desired instance type
   subnet_id     = aws_subnet.public_subnet_1.id
@@ -94,7 +94,7 @@ resource "aws_instance" "my_instance" {
   }
 }
 # Create an EC2 instance in the public subnet 2
-resource "aws_instance" "my_instance" {
+resource "aws_instance" "my_instance_2" {
   ami           = "ami-0b86b6d499bcd4261"  # Replace with the actual AMI ID
   instance_type = "t2.micro"      # Choose the desired instance type
   subnet_id     = aws_subnet.public_subnet_2.id
