@@ -34,10 +34,7 @@ resource "aws_subnet" "public_subnet_2" {
 resource "aws_internet_gateway" "my_internet_gateway_1" {
   vpc_id = aws_vpc.my_newvpc.id
 }
-# Create an Internet Gateway 2
-resource "aws_internet_gateway" "my_internet_gateway_2" {
-  vpc_id = aws_vpc.my_newvpc.id
-}
+
 # Create a route table for the public subnet 1
 resource "aws_route_table" "public_route_table_1" {
   vpc_id = aws_vpc.my_newvpc.id
@@ -68,7 +65,7 @@ resource "aws_route" "internet_route_1" {
 resource "aws_route" "internet_route_2" {
   route_table_id         = aws_route_table.public_route_table_2.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.my_internet_gateway_2.id
+  gateway_id             = aws_internet_gateway.my_internet_gateway_1.id
 }
 # Create a security group allowing inbound SSH traffic
 resource "aws_security_group" "allow_ssh" {
