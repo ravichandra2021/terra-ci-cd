@@ -125,13 +125,6 @@ resource "aws_lb" "my_alb" {
   idle_timeout                     = 60
   enable_cross_zone_load_balancing = true
 
-  enable_deletion_protection = false
-  enable_http2               = true
-  idle_timeout               = 60
-
-  enable_http2 = true
-
-  enable_deletion_protection = false
 }
 
 # Register EC2 instances with the ALB
@@ -150,7 +143,7 @@ resource "aws_lb_target_group" "my_target_group" {
 }
 
 resource "aws_lb_listener" "my_listener" {
-  load_balancer_arn = aws_lb.my_alb.arn
+  load_balancer_arn = arn:aws:elasticloadbalancing:us-east-1:129882018060:loadbalancer/app/my-alb/dfd3d9c15d384599
   port              = 80
   protocol          = "HTTP"
 
