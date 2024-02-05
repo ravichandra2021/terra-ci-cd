@@ -110,6 +110,30 @@ resource "aws_security_group" "alb_sg" {
   vpc_id = aws_vpc.my_newvpc.id
 
   // Add any necessary inbound rules for ALB
+ ingress {
+    from_port   = 80  // HTTP traffic
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  // Allow traffic from any source
+  }
+
+  ingress {
+    from_port   = 443  // HTTPS traffic
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  // Allow traffic from any source
+  }
+
+  // Add any other necessary inbound rules here
+
+  // Outbound rules (allow all outbound traffic by default)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 }
 
 # Create ALB
